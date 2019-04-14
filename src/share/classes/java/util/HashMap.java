@@ -494,8 +494,10 @@ public class HashMap<K,V>
         }
 
         Entry[] newTable = new Entry[newCapacity];
+        //把原map中的所有entry放到新map中
         transfer(newTable);
         table = newTable;
+        //更新大小后，重新计算 阀值
         threshold = (int)(newCapacity * loadFactor);
     }
 
@@ -542,6 +544,7 @@ public class HashMap<K,V>
          * By using the conservative calculation, we subject ourself
          * to at most one extra resize.
          */
+        //添加一个map时，判断是否调整大小
         if (numKeysToBeAdded > threshold) {
             int targetCapacity = (int)(numKeysToBeAdded / loadFactor + 1);
             if (targetCapacity > MAXIMUM_CAPACITY)
@@ -762,6 +765,7 @@ public class HashMap<K,V>
          * overwritten by an invocation of put(k,v) for a key k that's already
          * in the HashMap.
          */
+        //当前key的value被覆盖时，调用此方法
         void recordAccess(HashMap<K,V> m) {
         }
 
@@ -769,6 +773,7 @@ public class HashMap<K,V>
          * This method is invoked whenever the entry is
          * removed from the table.
          */
+        //当前key对应的value被remove时，调用此方法
         void recordRemoval(HashMap<K,V> m) {
         }
     }
