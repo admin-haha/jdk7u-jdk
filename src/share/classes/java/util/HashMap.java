@@ -315,8 +315,11 @@ public class HashMap<K,V>
      */
     public V get(Object key) {
         if (key == null)
+            //获取key为null的map
             return getForNullKey();
+        //计算hash
         int hash = hash(key.hashCode());
+        //去数组对应位置的链表上获取相应key的map
         for (Entry<K,V> e = table[indexFor(hash, table.length)];
              e != null;
              e = e.next) {
@@ -334,6 +337,7 @@ public class HashMap<K,V>
      * operations (get and put), but incorporated with conditionals in
      * others.
      */
+    //默认去数组的第一个entry是key为null为map(如果有的话)
     private V getForNullKey() {
         for (Entry<K,V> e = table[0]; e != null; e = e.next) {
             if (e.key == null)
@@ -350,6 +354,7 @@ public class HashMap<K,V>
      * @return <tt>true</tt> if this map contains a mapping for the specified
      * key.
      */
+    //调用getEntry(key) 判断是否存在相应的key
     public boolean containsKey(Object key) {
         return getEntry(key) != null;
     }
@@ -359,6 +364,7 @@ public class HashMap<K,V>
      * HashMap.  Returns null if the HashMap contains no mapping
      * for the key.
      */
+    //和get(key)处理一样
     final Entry<K,V> getEntry(Object key) {
         int hash = (key == null) ? 0 : hash(key.hashCode());
         for (Entry<K,V> e = table[indexFor(hash, table.length)];
@@ -493,6 +499,7 @@ public class HashMap<K,V>
             return;
         }
 
+        //创建新的数组
         Entry[] newTable = new Entry[newCapacity];
         //把原map中的所有entry放到新map中
         transfer(newTable);
@@ -504,6 +511,7 @@ public class HashMap<K,V>
     /**
      * Transfers all entries from current table to newTable.
      */
+    //遍历原map把所有entry添加到新mao中
     void transfer(Entry[] newTable) {
         Entry[] src = table;
         int newCapacity = newTable.length;
@@ -643,11 +651,13 @@ public class HashMap<K,V>
      * Removes all of the mappings from this map.
      * The map will be empty after this call returns.
      */
+    //把数组的所有位置都置为null
     public void clear() {
         modCount++;
         Entry[] tab = table;
         for (int i = 0; i < tab.length; i++)
             tab[i] = null;
+        //更新entry数量为0
         size = 0;
     }
 
@@ -659,6 +669,7 @@ public class HashMap<K,V>
      * @return <tt>true</tt> if this map maps one or more keys to the
      *         specified value
      */
+    //遍历所有entry比较value
     public boolean containsValue(Object value) {
         if (value == null)
             return containsNullValue();
@@ -674,6 +685,7 @@ public class HashMap<K,V>
     /**
      * Special-case code for containsValue with null argument
      */
+    //判断是否有value等于null的entru
     private boolean containsNullValue() {
         Entry[] tab = table;
         for (int i = 0; i < tab.length ; i++)
@@ -786,10 +798,13 @@ public class HashMap<K,V>
      * Subclass overrides this to alter the behavior of put method.
      */
 
-    //添加entry
+    //添加entry，直接添加到数组相应的位置
+
+    //如果存在hash冲突，则相当于用头插法在链表头添加entry
     void addEntry(int hash, K key, V value, int bucketIndex) {
         Entry<K,V> e = table[bucketIndex];
         table[bucketIndex] = new Entry<>(hash, key, value, e);
+        //如果添加元素后的数量大于等于阀值  则重置map大小 为原数组的长度的2倍
         if (size++ >= threshold)
             resize(2 * table.length);
     }
